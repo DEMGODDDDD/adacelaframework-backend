@@ -19,7 +19,6 @@ const ProductCatalog = ({
   contentColor,
   surfaceColor,
   isCustomer,
-  wishlistOnly,
   setCurrentPage,
   setFilterOpen,
   filterOpen,
@@ -36,7 +35,7 @@ const ProductCatalog = ({
   filterProps,
   activeFilterCount,
 }) => (
-  <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 } }} id="product-catalog">
+  <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, scrollMarginTop: { xs: '120px', md: '96px' } }} id="product-catalog">
     <ScrollReveal distance={14}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3, justifyContent: 'space-between', alignItems: { sm: 'center' } }}>
         <Box>
@@ -46,7 +45,7 @@ const ProductCatalog = ({
             </Typography>
           )}
           <Typography variant="h4" sx={{ fontWeight: 900, color: contentColor }}>
-            {wishlistOnly ? 'Your Wishlist' : 'Shop All Products'}
+            Shop All Products
           </Typography>
         </Box>
         <Badge

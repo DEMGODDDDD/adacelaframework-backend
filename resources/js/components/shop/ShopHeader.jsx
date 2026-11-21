@@ -29,9 +29,9 @@ const ShopHeader = ({
   query,
   setQuery,
   setCurrentPage,
-  wishlistOnly,
+  wishlistOpen,
   wishlistCount,
-  onToggleWishlist,
+  onOpenWishlist,
   cartQuantity,
   onOpenCart,
   onOpenProfile,
@@ -73,8 +73,8 @@ const ShopHeader = ({
           />
         </Box>
         <Stack direction="row" spacing={{ xs: 0, md: 1 }} sx={{ order: { xs: 2, md: 0 }, ml: { xs: 'auto', md: 0 }, alignItems: 'center', justifyContent: 'flex-end', flex: '0 0 auto' }}>
-          <Tooltip title={wishlistOnly ? 'Show all products' : 'Wishlist'}>
-            <IconButton aria-label="Wishlist" onClick={onToggleWishlist} sx={{ color: wishlistOnly ? '#FF5C5C' : 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Tooltip title="Wishlist">
+            <IconButton aria-label="Wishlist" onClick={onOpenWishlist} sx={{ color: wishlistOpen ? '#FF5C5C' : 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <Badge badgeContent={wishlistCount} color="error"><FavoriteBorder /></Badge>
             </IconButton>
           </Tooltip>

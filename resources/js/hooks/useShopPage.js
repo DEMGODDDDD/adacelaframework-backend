@@ -37,8 +37,8 @@ const useShopPage = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isCustomer, setIsCustomer] = useState(Boolean(authService.getToken()));
   const [user, setUser] = useState(() => authService.getUserFromStorage());
-  const [wishlistOnly, setWishlistOnly] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
   const [checkoutForm, setCheckoutForm] = useState({
@@ -56,7 +56,7 @@ const useShopPage = () => {
   const cartMergeStarted = useRef(false);
 
   const customerWishlistProductIds = useMemo(
-    () => new Set(wishlistItems.map((item) => Number(item.product_id))),
+    () => new Set(wishlistItems.map((item) => Number(item.product_id ?? item.product?.id))),
     [wishlistItems],
   );
   const cartQuantity = cartItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
@@ -81,13 +81,12 @@ const useShopPage = () => {
           per_page: PAGE_SIZE,
           page: currentPage,
           sort,
-          min_price: priceRange[0],
-          max_price: priceRange[1],
-          min_rating: minimumRating,
         };
+        params.min_price = priceRange[0];
+        params.max_price = priceRange[1];
+        params.min_rating = minimumRating;
         if (selectedCategory) params.category_id = selectedCategory;
         if (debouncedQuery) params.search = debouncedQuery;
-        if (wishlistOnly) params.wishlist_only = true;
 
         const productResponse = await api.get('/products', { params });
         if (!active) return;
@@ -104,7 +103,7 @@ const useShopPage = () => {
     return () => {
       active = false;
     };
-  }, [currentPage, debouncedQuery, minimumRating, priceRange, selectedCategory, sort, wishlistOnly]);
+  }, [currentPage, debouncedQuery, minimumRating, priceRange, selectedCategory, sort]);
 
   useEffect(() => {
     let active = true;
@@ -260,28 +259,30 @@ const useShopPage = () => {
       setAuthPromptOpen(true);
       return;
     }
-    const current = wishlistItems.find((item) => Number(item.product_id) === Number(product.id));
+    const current = wishlistItems.find(
+      (item) => Number(item.product_id ?? item.product?.id) === Number(product.id),
+    );
     try {
       if (current) {
         await api.delete(`/wishlist/${current.id}`);
-        setWishlistItems((items) => items.filter((item) => item.id !== current.id));
+        setWishlistItems((items) => items.filter((item) => Number(item.id) !== Number(current.id)));
       } else {
         const response = await api.post('/wishlist', { product_id: product.id });
         const wishlistItem = getResponseData(response);
-        setWishlistItems((items) => [...items, wishlistItem]);
+        setWishlistItems((items) => (
+          items.some((item) => Number(item.product_id ?? item.product?.id) === Number(product.id))
+            ? items
+            : [...items, wishlistItem]
+        ));
       }
     } catch (requestError) {
       setNotice(requestError.response?.data?.message || 'Unable to update your wishlist.');
     }
   };
 
-  const toggleWishlistView = () => {
+  const openWishlist = () => {
     if (!isCustomer) setAuthPromptOpen(true);
-    else {
-      setWishlistOnly((value) => !value);
-      setSelectedCategory(null);
-      setCurrentPage(1);
-    }
+    else setWishlistOpen(true);
   };
 
   const handleCheckout = async (event) => {
@@ -353,10 +354,10 @@ const useShopPage = () => {
     wishlistItems,
     isCustomer,
     user,
-    wishlistOnly,
-    setWishlistOnly,
     cartOpen,
     setCartOpen,
+    wishlistOpen,
+    setWishlistOpen,
     checkoutOpen,
     setCheckoutOpen,
     authPromptOpen,
@@ -371,7 +372,7 @@ const useShopPage = () => {
     handleAddToCart,
     handleQuantityChange,
     handleWishlistToggle,
-    toggleWishlistView,
+    openWishlist,
     handleCheckout,
     clearCart,
     handleLogout,

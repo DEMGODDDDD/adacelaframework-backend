@@ -22,7 +22,6 @@ const ProductFiltersPanel = ({
   categories,
   selectedCategory,
   setSelectedCategory,
-  setWishlistOnly,
   setCurrentPage,
   priceRange,
   setPriceRange,
@@ -89,7 +88,6 @@ const ProductFiltersPanel = ({
     setSort('latest');
     setQuery('');
     setDebouncedQuery('');
-    setWishlistOnly(false);
     setCurrentPage(1);
     setFilterOpen(false);
   };

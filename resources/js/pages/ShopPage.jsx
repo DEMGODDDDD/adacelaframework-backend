@@ -9,6 +9,7 @@ import ShopFooter from '../components/shop/ShopFooter';
 import ShopHeader from '../components/shop/ShopHeader';
 import ShopHero from '../components/shop/ShopHero';
 import ShopNotice from '../components/shop/ShopNotice';
+import WishlistDrawer from '../components/shop/WishlistDrawer';
 import useShopPage from '../hooks/useShopPage';
 
 const ShopPage = () => {
@@ -37,9 +38,9 @@ const ShopPage = () => {
         query={shop.query}
         setQuery={shop.setQuery}
         setCurrentPage={shop.setCurrentPage}
-        wishlistOnly={shop.wishlistOnly}
+        wishlistOpen={shop.wishlistOpen}
         wishlistCount={shop.wishlistItems.length}
-        onToggleWishlist={shop.toggleWishlistView}
+        onOpenWishlist={shop.openWishlist}
         cartQuantity={shop.cartQuantity}
         onOpenCart={() => shop.setCartOpen(true)}
         onOpenProfile={() => navigate('/account')}
@@ -51,7 +52,6 @@ const ShopPage = () => {
         contentColor={contentColor}
         surfaceColor={surfaceColor}
         isCustomer={shop.isCustomer}
-        wishlistOnly={shop.wishlistOnly}
         setCurrentPage={shop.setCurrentPage}
         setFilterOpen={shop.setFilterOpen}
         filterOpen={shop.filterOpen}
@@ -70,7 +70,6 @@ const ShopPage = () => {
           categories: shop.categories,
           selectedCategory: shop.selectedCategory,
           setSelectedCategory: shop.setSelectedCategory,
-          setWishlistOnly: shop.setWishlistOnly,
           setCurrentPage: shop.setCurrentPage,
           priceRange: shop.priceRange,
           setPriceRange: shop.setPriceRange,
@@ -101,6 +100,16 @@ const ShopPage = () => {
         onOpenAuth={() => shop.setAuthPromptOpen(true)}
         onOpenCheckout={() => shop.setCheckoutOpen(true)}
         clearCart={shop.clearCart}
+      />
+      <WishlistDrawer
+        open={shop.wishlistOpen}
+        onClose={() => shop.setWishlistOpen(false)}
+        pageColor={pageColor}
+        contentColor={contentColor}
+        surfaceColor={surfaceColor}
+        wishlistItems={shop.wishlistItems}
+        onAddToCart={shop.handleAddToCart}
+        onRemove={shop.handleWishlistToggle}
       />
       <AuthPromptDialog
         open={shop.authPromptOpen}
